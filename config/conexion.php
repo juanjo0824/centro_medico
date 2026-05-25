@@ -1,37 +1,30 @@
 <?php
-    require_once "../config/conexion.php";
-    
-    //Funcion para buscar un usuario por su login
-    function validar_usuario($login, $password)
+    // script para crear una conexión con la BD
+
+    require_once 'constantes.php';
+
+    function conectar()
     {
-        //establecer conexion con la BD
+        // Conexión con la BD
+        $conexion = mysqli_connect(HOST, USER, PW, BD); 
 
-        $conexion = conectar();
+        // Establecer conjunto de caracteres para el hosting
+        mysqli_set_charset($conexion, 'utf8mb4'); 
 
-        //instruccion SQL para hacer la consulta a la BD
+        // Verificar la conexión con la BD
 
-        $sql = "SELECT login_usuario, password_usuario, estado_uduario, tipo_usuario, COUNT(*) AS contar FROM usuario WHERE login_usuario = '$login' AND password_usuario = '$password'";
-
-        //ejecutar la consulta SQL a la base de datos
-
-        $consulta = mysqli_query($conexion, $sql) or trigger_error("Error en la consulta SQL: " . mysqli_error($conexion));
-
-        //Convertir consulta en Array
-
-        $resultado = mysqli_fetch_array($consulta);
-
-        //verificar si el usuario existe en la BD
-
-        if ($resultado['contar'] > 0) 
+        if (!$conexion) 
         {
-            echo "el usuario existe en la BD";
-            echo $resultado['login_usuario'];
-        } 
-        else 
-        {
-            echo "el usuario no existe en la BD o usuario o contraseña incorrectos";
+            die("<br>La conexión con la BD falló: ".mysqli_connect_error());  
         }
+        /*else
+        {
+            die("<br>Conexión a la BD exitosa!"); 
+        }*/
+        return $conexion;
     }
 
-    conectar();
+    // Probar conexion a BD
+    //echo '<br>Probando conexión con la BD...';
+    //$con = conectar();
 ?>

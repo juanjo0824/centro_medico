@@ -1,37 +1,52 @@
 <?php
-    require_once "../config/conexion.php";
+    require (__DIR__."/../config/conexion.php");
     
-    //Funcion para buscar un usuario por su login
+    // funcion para buscar un usuario por su login
     function validar_usuario($login, $password)
     {
-        //establecer conexion con la BD
-
+        // Establecer conexión con la BD
         $conexion = conectar();
 
-        //instruccion SQL para hacer la consulta a la BD
+        echo "<br>función validar_usuario, del modelo, ejecutándose...";
 
-        $sql = "SELECT login_usuario, password_usuario, estado_uduario, tipo_usuario, COUNT(*) AS contar FROM usuario WHERE login_usuario = '$login' AND password_usuario = '$password'";
+        // Instruccion SQL para hacer la consulta a la BD
+        $sql = "SELECT id_usuario, login_usuario, password_usuario, estado_usuario, tipo_usuario, COUNT(*) AS contar FROM Usuario WHERE login_usuario = '$login' AND password_usuario = '$password'";
 
-        //ejecutar la consulta SQL a la base de datos
+        // Ejecutar la consulta SQL a la BD
+        $consulta = mysqli_query($conexion, $sql) or trigger_error("Error en la consulta MySql: ".mysqli_error($conexion));
 
-        $consulta = mysqli_query($conexion, $sql) or trigger_error("Error en la consulta SQL: " . mysqli_error($conexion));
+        // Convertir consulta en array
+        //$resultado = mysqli_fetch_array($consulta);
+        $resultado = mysqli_fetch_assoc($consulta);
 
-        //Convertir consulta en Array
-
-        $resultado = mysqli_fetch_array($consulta);
-
-        //verificar si el usuario existe en la BD
-
-        if ($resultado['contar'] > 0) 
+        // verificar si el usuario existe en la BD
+        if($resultado['contar']>0)
         {
-            echo "el usuario existe en la BD";
-            echo $resultado['login_usuario'];
-        } 
-        else 
-        {
-            echo "el usuario no existe en la BD o usuario o contraseña incorrectos";
+            echo '<br>El usuario existe en la BD';
+            echo '<br>Id: '.$resultado['id_usuario'];
+            echo '<br>Usuario: '.$resultado['login_usuario'];
+            echo '<br>Tipo: '.$resultado['tipo_usuario'];
+            echo '<br>Estado: '.$resultado['estado_usuario'];
         }
+        else
+        {
+            echo '<br>El usuario no existe, o login o password incorrecto';
+        }
+
+        return $resultado;
     }
 
-    conectar();
+    
+    // probar consulta a BD
+
+    $user = 'admin';
+    $pass = 12345;
+
+    echo 'Probando consulta...';
+    echo '<br>'.$user;
+    echo '<br>'.$pass;
+    
+
+    validar_usuario($user, $pass);
+
 ?>
